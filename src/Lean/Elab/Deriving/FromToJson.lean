@@ -166,8 +166,8 @@ where
         -- Return syntax to parse `id`, either via `FromJson` or recursively
         -- if `id`'s type is the type we're deriving for.
         let mkFromJson (idx : Nat) (type : Expr) : TermElabM (TSyntax ``doExpr) :=
-          if type.isAppOf indVal.name then `(Lean.Parser.Term.doExpr| $fromJsonFuncId:ident jsons[$(quote idx)]!)
-          else `(Lean.Parser.Term.doExpr| fromJson? jsons[$(quote idx)]!)
+          if type.isAppOf indVal.name then `(Lean.Parser.Term.doExpr| $fromJsonFuncId:ident (GetElem.getElem! jsons $(quote idx)))
+          else `(Lean.Parser.Term.doExpr| fromJson? (GetElem.getElem! jsons $(quote idx)))
         let identNames := binders.map Prod.fst
         let fromJsons ← binders.mapIdxM fun idx (_, type) => mkFromJson idx type
         let userNamesOpt ← if binders.size == userNames.size then

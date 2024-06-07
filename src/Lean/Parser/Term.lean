@@ -769,6 +769,15 @@ is short for accessing the `i`-th field (1-indexed) of `e` if it is of a structu
 @[builtin_term_parser] def arrow    := trailing_parser
   checkPrec 25 >> unicodeSymbol " → " " -> " >> termParser 25
 
+@[builtin_term_parser] def getElem := trailing_parser:maxPrec
+  checkNoWsBefore >> "[" >> withoutPosition termParser >> "]"
+@[builtin_term_parser] def getElem' := trailing_parser:maxPrec
+  checkNoWsBefore >> "[" >> withoutPosition termParser >> "]'" >> termParser maxPrec
+@[builtin_term_parser] def getElem? := trailing_parser:maxPrec
+  checkNoWsBefore >> "[" >> withoutPosition termParser >> "]" >> checkNoWsBefore >> "?"
+@[builtin_term_parser] def getElem! := trailing_parser:maxPrec
+  checkNoWsBefore >> "[" >> withoutPosition termParser >> "]" >> checkNoWsBefore >> "!"
+
 /--
 Syntax kind for syntax nodes representing the field of a projection in the `InfoTree`.
 Specifically, the `InfoTree` node for a projection `s.f` contains a child `InfoTree` node
