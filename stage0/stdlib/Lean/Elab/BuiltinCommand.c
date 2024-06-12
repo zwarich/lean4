@@ -171,6 +171,7 @@ LEAN_EXPORT lean_object* l_Lean_throwError___at_Lean_Elab_Command_elabExport___s
 LEAN_EXPORT lean_object* l_Lean_Elab_Command_elabEvalUnsafe___lambda__5(lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*);
 lean_object* l_Lean_Syntax_getId(lean_object*);
 static lean_object* l_Lean_Elab_Command_elabEvalUnsafe___lambda__3___closed__8;
+uint8_t l_List_beq___at___private_Lean_Data_OpenDecl_0__Lean_beqOpenDecl____x40_Lean_Data_OpenDecl___hyg_40____spec__1(lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_Lean_Elab_Command_elabInitQuot___boxed(lean_object*);
 static lean_object* l___regBuiltin_Lean_Elab_Command_expandInCmd__1___closed__4;
 lean_object* l_Array_findIdx_x3f_loop___rarg(lean_object*, lean_object*, lean_object*);
@@ -785,7 +786,6 @@ static lean_object* l_Lean_Elab_Command_elabEvalUnsafe___lambda__3___closed__16;
 static lean_object* l___private_Lean_Elab_BuiltinCommand_0__Lean_Elab_Command_typelessBinder_x3f___closed__1;
 lean_object* l_Lean_Elab_Command_withFreshMacroScope___rarg(lean_object*, lean_object*, lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_Lean_Elab_Command_withNamespace___rarg(lean_object*, lean_object*, lean_object*, lean_object*, lean_object*);
-uint8_t l_List_beq___at___private_Lean_Data_OpenDecl_0__Lean_beqOpenDecl____x40_Lean_Data_OpenDecl___hyg_39____spec__1(lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_Lean_Elab_Command_elabInitQuot___rarg(lean_object*, lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l___regBuiltin_Lean_Elab_Command_elabSection_declRange__1(lean_object*);
 static lean_object* l___regBuiltin_Lean_Elab_Command_elabModuleDoc__1___closed__7;
@@ -9225,7 +9225,7 @@ lean_inc(x_20);
 lean_ctor_set_tag(x_16, 1);
 lean_ctor_set(x_16, 1, x_21);
 lean_ctor_set(x_16, 0, x_20);
-x_22 = l_List_beq___at___private_Lean_Data_OpenDecl_0__Lean_beqOpenDecl____x40_Lean_Data_OpenDecl___hyg_39____spec__1(x_14, x_16);
+x_22 = l_List_beq___at___private_Lean_Data_OpenDecl_0__Lean_beqOpenDecl____x40_Lean_Data_OpenDecl___hyg_40____spec__1(x_14, x_16);
 lean_dec(x_16);
 if (x_22 == 0)
 {
@@ -9280,7 +9280,7 @@ lean_inc(x_33);
 x_35 = lean_alloc_ctor(1, 2, 0);
 lean_ctor_set(x_35, 0, x_33);
 lean_ctor_set(x_35, 1, x_34);
-x_36 = l_List_beq___at___private_Lean_Data_OpenDecl_0__Lean_beqOpenDecl____x40_Lean_Data_OpenDecl___hyg_39____spec__1(x_14, x_35);
+x_36 = l_List_beq___at___private_Lean_Data_OpenDecl_0__Lean_beqOpenDecl____x40_Lean_Data_OpenDecl___hyg_40____spec__1(x_14, x_35);
 lean_dec(x_35);
 if (x_36 == 0)
 {
