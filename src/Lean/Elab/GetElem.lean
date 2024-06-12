@@ -10,15 +10,23 @@ import Lean.Parser.Term
 namespace Lean.Elab.Term
 
 @[builtin_term_elab getElem] def elabGetElem : TermElab := fun stx expectedType? => do
-  elabTerm (← `(getElem $(⟨stx[0]⟩) $(⟨stx[2]⟩) (by get_elem_tactic))) expectedType?
+  match stx with
+  | `($xs[$i]) => elabTerm (← `(getElem $xs $i (by get_elem_tactic))) expectedType?
+  | _ => throwUnsupportedSyntax
 
 @[builtin_term_elab getElem'] def elabGetElem' : TermElab := fun stx expectedType? => do
-  elabTerm (← `(getElem $(⟨stx[0]⟩) $(⟨stx[2]⟩) $(⟨stx[4]⟩))) expectedType?
+  match stx with
+  | `($xs[$i]'$h) => elabTerm (← `(getElem $xs $i $h)) expectedType?
+  | _ => throwUnsupportedSyntax
 
 @[builtin_term_elab getElem?] def elabGetElem? : TermElab := fun stx expectedType? => do
-  elabTerm (← `(getElem? $(⟨stx[0]⟩) $(⟨stx[2]⟩))) expectedType?
+  match stx with
+  | `($xs[$i]?) => elabTerm (← `(getElem? $xs $i)) expectedType?
+  | _ => throwUnsupportedSyntax
 
 @[builtin_term_elab getElem!] def elabGetElem! : TermElab := fun stx expectedType? => do
-  elabTerm (← `(getElem! $(⟨stx[0]⟩) $(⟨stx[2]⟩))) expectedType?
+  match stx with
+  | `($xs[$i]!) => elabTerm (← `(getElem! $xs $i)) expectedType?
+  | _ => throwUnsupportedSyntax
 
 end Lean.Elab.Term

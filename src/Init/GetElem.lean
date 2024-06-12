@@ -58,26 +58,6 @@ class GetElem (coll : Type u) (idx : Type v) (elem : outParam (Type w))
 
 export GetElem (getElem getElem! getElem?)
 
-@[inherit_doc getElem]
-syntax:max term noWs "[" withoutPosition(term) "]" : term
-macro_rules | `($x[$i]) => `(getElem $x $i (by get_elem_tactic))
-
-@[inherit_doc getElem]
-syntax term noWs "[" withoutPosition(term) "]'" term:max : term
-macro_rules | `($x[$i]'$h) => `(getElem $x $i $h)
-
-/--
-The syntax `arr[i]?` gets the `i`'th element of the collection `arr` or
-returns `none` if `i` is out of bounds.
--/
-macro:max x:term noWs "[" i:term "]" noWs "?" : term => `(getElem? $x $i)
-
-/--
-The syntax `arr[i]!` gets the `i`'th element of the collection `arr` and
-panics `i` is out of bounds.
--/
-macro:max x:term noWs "[" i:term "]" noWs "!" : term => `(getElem! $x $i)
-
 class LawfulGetElem (cont : Type u) (idx : Type v) (elem : outParam (Type w))
    (dom : outParam (cont → idx → Prop)) [ge : GetElem cont idx elem dom] : Prop where
 
