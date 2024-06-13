@@ -12,6 +12,7 @@ namespace Lean.Elab.Term
 def elabNonDependentIfPossible (dependent : Expr) (elabNonDependent : TermElabM Expr) :
     TermElabM Expr := do
   let dependent ← instantiateMVars dependent
+  dbg_trace "{dependent}"
   match (dependent.getArg! 4).getAppFn with
   | .const name _ =>
       if name = `GetElem.toDGetElem then elabNonDependent
