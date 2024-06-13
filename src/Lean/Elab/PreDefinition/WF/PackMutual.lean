@@ -16,7 +16,7 @@ Checks that all codomians have the same level, throws an error otherwise.
 -/
 private def checkCodomainsLevel (fixedPrefixSize : Nat) (arities : Array Nat)
     (preDefs : Array PreDefinition) : MetaM Unit := do
-  forallBoundedTelescope preDefs[0]!.type  (fixedPrefixSize + arities[0]!)  fun _ type₀ => do
+  forallBoundedTelescope preDefs[0]!.type  (fixedPrefixSize + arities[(0 : Nat)]!)  fun _ type₀ => do
     let u₀ ← getLevel type₀
     for i in [1:preDefs.size] do
       forallBoundedTelescope preDefs[i]!.type  (fixedPrefixSize + arities[i]!) fun _ typeᵢ =>

@@ -196,7 +196,7 @@ def unexpandStructureInstance (stx : Syntax) : Delab := whenPPOption getPPStruct
   /- If implicit arguments should be shown, and the structure has parameters, we should not
      pretty print using { ... }, because we will not be able to see the parameters. -/
   let fieldNames := getStructureFields env s.induct
-  let mut fields := #[]
+  let mut fields : TSyntaxArray [`Lean.Parser.Term.structInstFieldAbbrev, `Lean.Parser.Term.structInstField] := #[]
   guard $ fieldNames.size == stx[1].getNumArgs
   if hasPPUsingAnonymousConstructorAttribute env s.induct then
     return ← withTypeAscription (cond := (← withType <| getPPOption getPPStructureInstanceType)) do

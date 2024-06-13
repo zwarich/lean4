@@ -164,7 +164,7 @@ private def inductiveSyntaxToView (modifiers : Modifiers) (decl : Syntax) : Comm
     addDocString' ctorName ctorModifiers.docString?
     addAuxDeclarationRanges ctorName ctor ctor[3]
     return { ref := ctor, modifiers := ctorModifiers, declName := ctorName, binders := binders, type? := type? : CtorView }
-  let computedFields ← (decl[5].getOptional?.map (·[1].getArgs) |>.getD #[]).mapM fun cf => withRef cf do
+  let computedFields ← (decl[(5 : Nat)].getOptional?.map (·[1].getArgs) |>.getD #[]).mapM fun cf => withRef cf do
     return { ref := cf, modifiers := cf[0], fieldId := cf[1].getId, type := ⟨cf[3]⟩, matchAlts := ⟨cf[4]⟩ }
   let classes ← liftCoreM <| getOptDerivingClasses decl[6]
   return {

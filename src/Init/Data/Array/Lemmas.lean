@@ -654,7 +654,7 @@ theorem mapIdx_induction (as : Array α) (f : Fin as.size → α → β)
     (hs : ∀ i, motive i.1 → p i (f i as[i]) ∧ motive (i + 1)) :
     motive as.size ∧ ∃ eq : (Array.mapIdx as f).size = as.size,
       ∀ i h, p ⟨i, h⟩ ((Array.mapIdx as f)[i]) := by
-  let rec go {bs i j h} (h₁ : j = bs.size) (h₂ : ∀ i h h', p ⟨i, h⟩ bs[i]) (hm : motive j) :
+  let rec go {bs i j h} (h₁ : j = bs.size) (h₂ : ∀ i h h', p ⟨i, h⟩ bs[i]'h') (hm : motive j) :
     let arr : Array β := Array.mapIdxM.map (m := Id) as f i j h bs
     motive as.size ∧ ∃ eq : arr.size = as.size, ∀ i h, p ⟨i, h⟩ arr[i] := by
     induction i generalizing j bs with simp [mapIdxM.map]

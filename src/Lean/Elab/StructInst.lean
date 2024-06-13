@@ -143,7 +143,7 @@ private def getStructSource (structStx : Syntax) : TermElabM Source :=
   ```
 -/
 private def isModifyOp? (stx : Syntax) : TermElabM (Option Syntax) := do
-  let s? ← stx[2].getSepArgs.foldlM (init := none) fun s? arg => do
+  let s? ← stx[(2 : Nat)].getSepArgs.foldlM (init := none) fun s? arg => do
     /- arg is of the form `structInstFieldAbbrev <|> structInstField` -/
     if arg.getKind == ``Lean.Parser.Term.structInstField then
       /- Remark: the syntax for `structInstField` is
@@ -366,7 +366,7 @@ private def mkStructView (stx : Syntax) (structName : Name) (source : Source) : 
 
      This method assumes that `structInstFieldAbbrev` had already been expanded.
   -/
-  let fields ← stx[2].getSepArgs.toList.mapM fun fieldStx => do
+  let fields ← stx[(2 : Nat)].getSepArgs.toList.mapM fun fieldStx => do
     let val      := fieldStx[2]
     let first    ← toFieldLHS fieldStx[0][0]
     let rest     ← fieldStx[0][1].getArgs.toList.mapM toFieldLHS

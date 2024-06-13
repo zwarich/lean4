@@ -94,7 +94,7 @@ private def isMultiConstant? (views : Array DefView) : Option (List Name) :=
      views[0]!.kind == .opaque &&
      views[0]!.binders.getArgs.size > 0 &&
      views[0]!.binders.getArgs.all (·.isIdent) then
-    some (views[0]!.binders.getArgs.toList.map (·.getId))
+    some (views[(0 : Nat)]!.binders.getArgs.toList.map (·.getId))
   else
     none
 

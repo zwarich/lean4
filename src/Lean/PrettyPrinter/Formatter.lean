@@ -535,7 +535,7 @@ def format (formatter : Formatter) (stx : Syntax) : CoreM Format := do
   catchInternalId backtrackExceptionId
     (do
       let (_, st) ← (concat formatter { table, options }).run { stxTrav := .fromSyntax stx }
-      let mut f := st.stack[0]!
+      let mut f := st.stack[(0 : Nat)]!
       if pp.oneline.get options then
         let mut s := f.pretty' options |>.trim
         let lineEnd := s.find (· == '\n')
