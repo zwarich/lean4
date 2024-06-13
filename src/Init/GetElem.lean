@@ -24,7 +24,7 @@ The proof side-condition `valid xs i` is automatically dispatched by the
 `get_elem_tactic` tactic, which can be extended by adding more clauses to
 `get_elem_tactic_trivial`.
 -/
-class GetElem (coll : Type u) (idx : Type v) (elem : outParam (Type w))
+class DGetElem (coll : Type u) (idx : Type v) (elem : outParam (idx → Type w))
               (valid : outParam (coll → idx → Prop)) where
   /--
   The syntax `arr[i]` gets the `i`'th element of the collection `arr`. If there
@@ -48,18 +48,40 @@ class GetElem (coll : Type u) (idx : Type v) (elem : outParam (Type w))
   * `arr[i]'h` is syntax for `getElem arr i h` with `h` an explicit proof the
     index is valid.
   -/
+  getElem (xs : coll) (i : idx) (h : valid xs i) : elem i
+
+  getElem? (xs : coll) (i : idx) [Decidable (valid xs i)] : Option (elem i) :=
+    if h : _ then some (getElem xs i h) else none
+
+  getElem! (xs : coll) (i : idx) [Inhabited (elem i)] [Decidable (valid xs i)] : elem i :=
+    match getElem? xs i with | some e => e | none => outOfBounds
+
+class GetElem (coll : Type u) (idx : Type v) (elem : outParam (Type w))
+              (valid : outParam (coll → idx → Prop)) where
   getElem (xs : coll) (i : idx) (h : valid xs i) : elem
 
   getElem? (xs : coll) (i : idx) [Decidable (valid xs i)] : Option elem :=
     if h : _ then some (getElem xs i h) else none
 
-  getElem! [Inhabited elem] (xs : coll) (i : idx) [Decidable (valid xs i)] : elem :=
+  getElem! (xs : coll) (i : idx) [Inhabited elem] [Decidable (valid xs i)] : elem :=
     match getElem? xs i with | some e => e | none => outOfBounds
 
-export GetElem (getElem getElem! getElem?)
+export GetElem (getElem getElem? getElem!)
+
+instance GetElem.toDGetElem [GetElem coll idx elem valid] : DGetElem coll idx (fun _ => elem) valid where
+  getElem := GetElem.getElem
+  getElem? := GetElem.getElem?
+  getElem! := GetElem.getElem!
+
+@[simp] theorem DGetElem.getElem_eq_getElem [GetElem coll idx elem valid] (xs : coll) (i : idx) (h : valid xs i) :
+    DGetElem.getElem xs i h = GetElem.getElem xs i h := rfl
+@[simp] theorem DGetElem.getElem?_eq_getElem? [GetElem coll idx elem valid] (xs : coll) (i : idx) [Decidable (valid xs i)] :
+    DGetElem.getElem? xs i = GetElem.getElem? xs i := rfl
+@[simp] theorem DGetElem.getElem!_eq_getElem! [GetElem coll idx elem valid] (xs : coll) (i : idx) [Inhabited elem] [Decidable (valid xs i)] :
+    DGetElem.getElem! xs i = GetElem.getElem! xs i := rfl
 
 class LawfulGetElem (cont : Type u) (idx : Type v) (elem : outParam (Type w))
-   (dom : outParam (cont → idx → Prop)) [ge : GetElem cont idx elem dom] : Prop where
+   (dom : outParam (cont → idx → Prop)) [GetElem cont idx elem dom] : Prop where
 
   getElem?_def (c : cont) (i : idx) [Decidable (dom c i)] :
     c[i]? = if h : dom c i then some (c[i]'h) else none := by intros; eq_refl
@@ -86,6 +108,44 @@ theorem getElem!_pos [GetElem cont idx elem dom] [LawfulGetElem cont idx elem do
 theorem getElem!_neg [GetElem cont idx elem dom] [LawfulGetElem cont idx elem dom]
     [Inhabited elem] (c : cont) (i : idx) (h : ¬dom c i) [Decidable (dom c i)] : c[i]! = default := by
   simp only [getElem!_def, getElem?_def, h]
+
+class LawfulDGetElem (cont : Type u) (idx : Type v) (elem : outParam (idx → Type w))
+   (dom : outParam (cont → idx → Prop)) [DGetElem cont idx elem dom] : Prop where
+
+  getElem?_def (c : cont) (i : idx) [Decidable (dom c i)] :
+    DGetElem.getElem? c i = if h : dom c i then some (DGetElem.getElem c i h) else none := by intros; eq_refl
+  getElem!_def (c : cont) (i : idx) [Inhabited (elem i)] [Decidable (dom c i)] :
+    DGetElem.getElem! c i = match DGetElem.getElem? c i with | some e => e | none => default := by intros; eq_refl
+
+instance LawfulGetElem.toLawfulDGetElem [GetElem coll idx elem valid] [LawfulGetElem coll idx elem valid] :
+    LawfulDGetElem coll idx (fun _ => elem) valid where
+  getElem?_def := getElem?_def
+  getElem!_def c i _ _ := by
+    rw [DGetElem.getElem!_eq_getElem!, getElem!_def c i, DGetElem.getElem?_eq_getElem?]
+    cases getElem? c i <;> rfl
+
+namespace LawfulDGetElem
+
+theorem getElem?_pos [DGetElem cont idx elem dom] [LawfulDGetElem cont idx elem dom]
+    (c : cont) (i : idx) (h : dom c i) [Decidable (dom c i)] : DGetElem.getElem? c i = some (DGetElem.getElem c i h) := by
+  rw [getElem?_def]
+  exact dif_pos h
+
+theorem getElem?_neg [DGetElem cont idx elem dom] [LawfulDGetElem cont idx elem dom]
+    (c : cont) (i : idx) (h : ¬dom c i) [Decidable (dom c i)] : DGetElem.getElem? c i = none := by
+  rw [getElem?_def]
+  exact dif_neg h
+
+theorem getElem!_pos [DGetElem cont idx elem dom] [LawfulDGetElem cont idx elem dom]
+    (c : cont) (i : idx) (h : dom c i) [Inhabited (elem i)] [Decidable (dom c i)] :
+    DGetElem.getElem! c i = DGetElem.getElem c i h := by
+  simp only [getElem!_def, getElem?_def, h]
+
+theorem getElem!_neg [DGetElem cont idx elem dom] [LawfulDGetElem cont idx elem dom]
+    (c : cont) (i : idx) (h : ¬dom c i) [Inhabited (elem i)] [Decidable (dom c i)] : DGetElem.getElem! c i = default := by
+  simp only [getElem!_def, getElem?_def, h]
+
+end LawfulDGetElem
 
 namespace Fin
 
