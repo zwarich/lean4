@@ -5287,16 +5287,16 @@ return x_91;
 else
 {
 lean_object* x_92; lean_object* x_93; lean_object* x_94; uint8_t x_95; 
-x_92 = lean_box(0);
-x_93 = lean_array_fget(x_2, x_4);
+x_92 = lean_array_fget(x_2, x_4);
+x_93 = lean_box(0);
 x_94 = lean_array_get_size(x_3);
-x_95 = lean_nat_dec_lt(x_93, x_94);
+x_95 = lean_nat_dec_lt(x_92, x_94);
 lean_dec(x_94);
 if (x_95 == 0)
 {
 lean_object* x_96; 
-lean_dec(x_93);
-x_96 = l___private_Init_GetElem_0__outOfBounds___rarg(x_92);
+lean_dec(x_92);
+x_96 = l___private_Init_GetElem_0__outOfBounds___rarg(x_93);
 if (lean_obj_tag(x_96) == 0)
 {
 lean_object* x_97; lean_object* x_98; 
@@ -5319,8 +5319,8 @@ goto block_88;
 else
 {
 lean_object* x_101; 
-x_101 = lean_array_fget(x_3, x_93);
-lean_dec(x_93);
+x_101 = lean_array_fget(x_3, x_92);
+lean_dec(x_92);
 if (lean_obj_tag(x_101) == 0)
 {
 lean_object* x_102; lean_object* x_103; 

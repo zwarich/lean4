@@ -409,14 +409,14 @@ _start:
 if (x_4 == 0)
 {
 lean_object* x_5; 
-x_5 = l___private_Init_GetElem_0__outOfBounds___rarg(x_1);
+x_5 = l___private_Init_GetElem_0__outOfBounds___rarg(x_3);
 return x_5;
 }
 else
 {
 lean_object* x_6; 
-lean_dec(x_1);
-x_6 = l_Subarray_get___rarg(x_2, x_3);
+lean_dec(x_3);
+x_6 = l_Subarray_get___rarg(x_1, x_2);
 return x_6;
 }
 }
@@ -496,8 +496,8 @@ uint8_t x_5; lean_object* x_6;
 x_5 = lean_unbox(x_4);
 lean_dec(x_4);
 x_6 = l_Subarray_instGetElemNatLtSize___lambda__3(x_1, x_2, x_3, x_5);
-lean_dec(x_3);
 lean_dec(x_2);
+lean_dec(x_1);
 return x_6;
 }
 }

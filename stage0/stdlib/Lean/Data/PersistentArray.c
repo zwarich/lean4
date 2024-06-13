@@ -1106,16 +1106,16 @@ _start:
 if (x_5 == 0)
 {
 lean_object* x_6; 
-lean_dec(x_3);
+lean_dec(x_2);
 lean_dec(x_1);
-x_6 = l___private_Init_GetElem_0__outOfBounds___rarg(x_2);
+x_6 = l___private_Init_GetElem_0__outOfBounds___rarg(x_4);
 return x_6;
 }
 else
 {
 lean_object* x_7; 
-lean_dec(x_2);
-x_7 = l_Lean_PersistentArray_get_x21___rarg(x_1, x_3, x_4);
+lean_dec(x_4);
+x_7 = l_Lean_PersistentArray_get_x21___rarg(x_1, x_2, x_3);
 return x_7;
 }
 }
@@ -1174,7 +1174,7 @@ uint8_t x_6; lean_object* x_7;
 x_6 = lean_unbox(x_5);
 lean_dec(x_5);
 x_7 = l_Lean_PersistentArray_instGetElemNatLtSizeOfInhabited___rarg___lambda__3(x_1, x_2, x_3, x_4, x_6);
-lean_dec(x_4);
+lean_dec(x_3);
 return x_7;
 }
 }

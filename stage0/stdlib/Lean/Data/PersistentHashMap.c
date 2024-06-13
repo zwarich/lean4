@@ -1629,18 +1629,18 @@ _start:
 if (x_6 == 0)
 {
 lean_object* x_7; 
-lean_dec(x_5);
 lean_dec(x_4);
+lean_dec(x_3);
 lean_dec(x_2);
 lean_dec(x_1);
-x_7 = l___private_Init_GetElem_0__outOfBounds___rarg(x_3);
+x_7 = l___private_Init_GetElem_0__outOfBounds___rarg(x_5);
 return x_7;
 }
 else
 {
 lean_object* x_8; 
-lean_dec(x_3);
-x_8 = l_Lean_PersistentHashMap_find_x3f___rarg(x_1, x_2, x_4, x_5);
+lean_dec(x_5);
+x_8 = l_Lean_PersistentHashMap_find_x3f___rarg(x_1, x_2, x_3, x_4);
 return x_8;
 }
 }
