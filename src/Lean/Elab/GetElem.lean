@@ -5,19 +5,26 @@ Authors: Markus Himmel
 -/
 prelude
 import Lean.Elab.Term
+import Lean.Elab.SyntheticMVars
 import Lean.Parser.Term
 
 namespace Lean.Elab.Term
 
 def elabNonDependentIfPossible (dependent : Expr) (elabNonDependent : TermElabM Expr) :
     TermElabM Expr := do
-  let dependent ← instantiateMVars dependent
+  let mut dependent ← instantiateMVars dependent
   dbg_trace "{dependent}"
-  match (dependent.getArg! 4).getAppFn with
+  let mut typeclassArgument := dependent.getArg! 4
+  if typeclassArgument.isMVar then
+    if (← withoutPostponing <| synthesizeInstMVarCore typeclassArgument.mvarId!) then
+      dependent ← instantiateMVars dependent
+      typeclassArgument := dependent.getArg! 4
+  tryPostponeIfMVar typeclassArgument
+  match typeclassArgument.getAppFn with
   | .const name _ =>
       if name = `GetElem.toDGetElem then elabNonDependent
       else return dependent
-  | _ => return dependent
+  | _ => elabNonDependent
 
 @[builtin_term_elab getElem] def elabGetElem : TermElab := fun stx expectedType? => do
   match stx with
