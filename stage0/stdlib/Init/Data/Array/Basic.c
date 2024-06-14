@@ -20,7 +20,7 @@ LEAN_EXPORT lean_object* l_Array_concatMapM(lean_object*, lean_object*, lean_obj
 LEAN_EXPORT lean_object* l_Array_takeWhile(lean_object*);
 LEAN_EXPORT lean_object* l_Array_foldrMUnsafe_fold___at_Array_toList___spec__2___rarg(lean_object*, size_t, size_t, lean_object*);
 static lean_object* l___aux__Init__Data__Array__Basic______macroRules__term_x23_x5b___x2c_x5d__1___closed__5;
-LEAN_EXPORT lean_object* l_Array_instGetElemUSizeLtNatToNatSize___lambda__2(lean_object*, lean_object*, size_t, uint8_t);
+LEAN_EXPORT lean_object* l_Array_instGetElemUSizeLtNatToNatSize___lambda__2(lean_object*, size_t, lean_object*, uint8_t);
 LEAN_EXPORT lean_object* l_Array_isPrefixOf(lean_object*);
 LEAN_EXPORT lean_object* l_Nat_foldTR_loop___at_Array_range___spec__1___at_Array_range___spec__2___boxed(lean_object*, lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_Array_foldlMUnsafe_fold___at_Array_foldl___spec__1___rarg(lean_object*, lean_object*, size_t, size_t, lean_object*);
@@ -904,20 +904,20 @@ return x_6;
 }
 }
 }
-LEAN_EXPORT lean_object* l_Array_instGetElemUSizeLtNatToNatSize___lambda__2(lean_object* x_1, lean_object* x_2, size_t x_3, uint8_t x_4) {
+LEAN_EXPORT lean_object* l_Array_instGetElemUSizeLtNatToNatSize___lambda__2(lean_object* x_1, size_t x_2, lean_object* x_3, uint8_t x_4) {
 _start:
 {
 if (x_4 == 0)
 {
 lean_object* x_5; 
-x_5 = l___private_Init_GetElem_0__outOfBounds___rarg(x_1);
+x_5 = l___private_Init_GetElem_0__outOfBounds___rarg(x_3);
 return x_5;
 }
 else
 {
 lean_object* x_6; 
-lean_dec(x_1);
-x_6 = lean_array_uget(x_2, x_3);
+lean_dec(x_3);
+x_6 = lean_array_uget(x_1, x_2);
 return x_6;
 }
 }
@@ -986,12 +986,12 @@ LEAN_EXPORT lean_object* l_Array_instGetElemUSizeLtNatToNatSize___lambda__2___bo
 _start:
 {
 size_t x_5; uint8_t x_6; lean_object* x_7; 
-x_5 = lean_unbox_usize(x_3);
-lean_dec(x_3);
+x_5 = lean_unbox_usize(x_2);
+lean_dec(x_2);
 x_6 = lean_unbox(x_4);
 lean_dec(x_4);
-x_7 = l_Array_instGetElemUSizeLtNatToNatSize___lambda__2(x_1, x_2, x_5, x_6);
-lean_dec(x_2);
+x_7 = l_Array_instGetElemUSizeLtNatToNatSize___lambda__2(x_1, x_5, x_3, x_6);
+lean_dec(x_1);
 return x_7;
 }
 }

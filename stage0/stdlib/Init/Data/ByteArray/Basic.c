@@ -48,7 +48,7 @@ LEAN_EXPORT lean_object* l_ByteArray_append___boxed(lean_object*, lean_object*);
 static lean_object* l_List_toString___at_instToStringByteArray___spec__1___closed__3;
 static lean_object* l_ByteArray_toUInt64BE_x21___closed__1;
 lean_object* lean_byte_array_push(lean_object*, uint8_t);
-LEAN_EXPORT lean_object* l_ByteArray_instGetElemNatUInt8LtSize___lambda__3(uint8_t, lean_object*, lean_object*, uint8_t);
+LEAN_EXPORT lean_object* l_ByteArray_instGetElemNatUInt8LtSize___lambda__3(lean_object*, lean_object*, uint8_t, uint8_t);
 LEAN_EXPORT lean_object* l_ByteArray_append(lean_object*, lean_object*);
 static lean_object* l_ByteArray_instGetElemUSizeUInt8LtNatValValSize___closed__1;
 LEAN_EXPORT lean_object* l_ByteArray_hash___boxed(lean_object*);
@@ -92,7 +92,7 @@ LEAN_EXPORT lean_object* l_ByteArray_toUInt64BE_x21(lean_object*);
 LEAN_EXPORT lean_object* l_ByteArray_size___boxed(lean_object*);
 static lean_object* l_ByteArray_toUInt64LE_x21___closed__5;
 LEAN_EXPORT lean_object* l_ByteArray_copySlice___boxed(lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*);
-LEAN_EXPORT lean_object* l_ByteArray_instGetElemUSizeUInt8LtNatValValSize___lambda__3(uint8_t, lean_object*, size_t, uint8_t);
+LEAN_EXPORT lean_object* l_ByteArray_instGetElemUSizeUInt8LtNatValValSize___lambda__3(lean_object*, size_t, uint8_t, uint8_t);
 LEAN_EXPORT lean_object* l_ByteArray_foldlM_loop___rarg___boxed(lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*, lean_object*);
 LEAN_EXPORT lean_object* l_ByteArray_toList(lean_object*);
 static lean_object* l_ByteArray_empty___closed__1;
@@ -298,20 +298,20 @@ return x_7;
 }
 }
 }
-LEAN_EXPORT lean_object* l_ByteArray_instGetElemNatUInt8LtSize___lambda__3(uint8_t x_1, lean_object* x_2, lean_object* x_3, uint8_t x_4) {
+LEAN_EXPORT lean_object* l_ByteArray_instGetElemNatUInt8LtSize___lambda__3(lean_object* x_1, lean_object* x_2, uint8_t x_3, uint8_t x_4) {
 _start:
 {
 if (x_4 == 0)
 {
 lean_object* x_5; lean_object* x_6; 
-x_5 = lean_box(x_1);
+x_5 = lean_box(x_3);
 x_6 = l___private_Init_GetElem_0__outOfBounds___rarg(x_5);
 return x_6;
 }
 else
 {
 uint8_t x_7; lean_object* x_8; 
-x_7 = lean_byte_array_fget(x_2, x_3);
+x_7 = lean_byte_array_fget(x_1, x_2);
 x_8 = lean_box(x_7);
 return x_8;
 }
@@ -390,13 +390,13 @@ LEAN_EXPORT lean_object* l_ByteArray_instGetElemNatUInt8LtSize___lambda__3___box
 _start:
 {
 uint8_t x_5; uint8_t x_6; lean_object* x_7; 
-x_5 = lean_unbox(x_1);
-lean_dec(x_1);
+x_5 = lean_unbox(x_3);
+lean_dec(x_3);
 x_6 = lean_unbox(x_4);
 lean_dec(x_4);
-x_7 = l_ByteArray_instGetElemNatUInt8LtSize___lambda__3(x_5, x_2, x_3, x_6);
-lean_dec(x_3);
+x_7 = l_ByteArray_instGetElemNatUInt8LtSize___lambda__3(x_1, x_2, x_5, x_6);
 lean_dec(x_2);
+lean_dec(x_1);
 return x_7;
 }
 }
@@ -428,20 +428,20 @@ return x_7;
 }
 }
 }
-LEAN_EXPORT lean_object* l_ByteArray_instGetElemUSizeUInt8LtNatValValSize___lambda__3(uint8_t x_1, lean_object* x_2, size_t x_3, uint8_t x_4) {
+LEAN_EXPORT lean_object* l_ByteArray_instGetElemUSizeUInt8LtNatValValSize___lambda__3(lean_object* x_1, size_t x_2, uint8_t x_3, uint8_t x_4) {
 _start:
 {
 if (x_4 == 0)
 {
 lean_object* x_5; lean_object* x_6; 
-x_5 = lean_box(x_1);
+x_5 = lean_box(x_3);
 x_6 = l___private_Init_GetElem_0__outOfBounds___rarg(x_5);
 return x_6;
 }
 else
 {
 uint8_t x_7; lean_object* x_8; 
-x_7 = lean_byte_array_uget(x_2, x_3);
+x_7 = lean_byte_array_uget(x_1, x_2);
 x_8 = lean_box(x_7);
 return x_8;
 }
@@ -521,15 +521,15 @@ return x_6;
 LEAN_EXPORT lean_object* l_ByteArray_instGetElemUSizeUInt8LtNatValValSize___lambda__3___boxed(lean_object* x_1, lean_object* x_2, lean_object* x_3, lean_object* x_4) {
 _start:
 {
-uint8_t x_5; size_t x_6; uint8_t x_7; lean_object* x_8; 
-x_5 = lean_unbox(x_1);
-lean_dec(x_1);
-x_6 = lean_unbox_usize(x_3);
+size_t x_5; uint8_t x_6; uint8_t x_7; lean_object* x_8; 
+x_5 = lean_unbox_usize(x_2);
+lean_dec(x_2);
+x_6 = lean_unbox(x_3);
 lean_dec(x_3);
 x_7 = lean_unbox(x_4);
 lean_dec(x_4);
-x_8 = l_ByteArray_instGetElemUSizeUInt8LtNatValValSize___lambda__3(x_5, x_2, x_6, x_7);
-lean_dec(x_2);
+x_8 = l_ByteArray_instGetElemUSizeUInt8LtNatValValSize___lambda__3(x_1, x_5, x_6, x_7);
+lean_dec(x_1);
 return x_8;
 }
 }
