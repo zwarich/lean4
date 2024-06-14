@@ -22,7 +22,7 @@ private def expandIfThenElse
       pure (← mkName, #[])
     else
       let hole ← withFreshMacroScope mkName
-      let holeId := hole.raw[1]
+      let holeId : Syntax := hole.raw[1]
       let case ← (open TSyntax.Compat in `(tactic|
           case $holeId:ident =>%$tk
             -- annotate `then/else` with state after `case`
