@@ -6,6 +6,8 @@ Authors: Leonardo de Moura
 prelude
 import Lean.Compiler.Options
 import Lean.Compiler.ExternAttr
+import Lean.Compiler.IR.Basic
+import Lean.Compiler.IR.ToIR
 import Lean.Compiler.LCNF.PassManager
 import Lean.Compiler.LCNF.Passes
 import Lean.Compiler.LCNF.PrettyPrinter
@@ -86,8 +88,9 @@ def run (declNames : Array Name) : CompilerM (Array Decl) := withAtLeastMaxRecDe
 
 end PassManager
 
-def compile (declNames : Array Name) : CoreM (Array Decl) :=
-  CompilerM.run <| PassManager.run declNames
+def compile (declNames : Array Name) : CoreM (Array IR.Decl) := do
+  let decls ← CompilerM.run <| PassManager.run declNames
+  IR.toIR decls
 
 def showDecl (phase : Phase) (declName : Name) : CoreM Format := do
   let some decl ← getDeclAt? declName phase | return "<not-available>"
