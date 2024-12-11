@@ -2515,9 +2515,9 @@ lean_object* x_6; uint8_t x_7;
 x_6 = lean_array_uget(x_2, x_3);
 x_7 = lean_unbox(x_6);
 lean_dec(x_6);
-if (x_7 == 0)
-{
 if (x_1 == 0)
+{
+if (x_7 == 0)
 {
 uint8_t x_8; 
 x_8 = 1;
@@ -2534,7 +2534,7 @@ goto _start;
 }
 else
 {
-if (x_1 == 0)
+if (x_7 == 0)
 {
 size_t x_12; size_t x_13; 
 x_12 = 1;

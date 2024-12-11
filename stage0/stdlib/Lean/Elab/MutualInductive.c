@@ -12205,9 +12205,9 @@ lean_object* x_6; uint8_t x_7;
 x_6 = lean_array_uget(x_2, x_3);
 x_7 = lean_unbox(x_6);
 lean_dec(x_6);
-if (x_7 == 0)
-{
 if (x_1 == 0)
+{
+if (x_7 == 0)
 {
 uint8_t x_8; 
 x_8 = 1;
@@ -12224,7 +12224,7 @@ goto _start;
 }
 else
 {
-if (x_1 == 0)
+if (x_7 == 0)
 {
 size_t x_12; size_t x_13; 
 x_12 = 1;
@@ -14243,19 +14243,19 @@ if (x_5 == 0)
 {
 lean_object* x_6; lean_object* x_7; lean_object* x_8; lean_object* x_9; lean_object* x_10; uint8_t x_11; 
 x_6 = lean_array_uget(x_2, x_3);
-x_7 = lean_ctor_get(x_6, 0);
-lean_inc(x_7);
-x_8 = lean_ctor_get(x_6, 1);
-lean_inc(x_8);
+x_7 = lean_ctor_get(x_1, 0);
+x_8 = lean_ctor_get(x_1, 1);
+x_9 = lean_ctor_get(x_6, 0);
+lean_inc(x_9);
+x_10 = lean_ctor_get(x_6, 1);
+lean_inc(x_10);
 lean_dec(x_6);
-x_9 = lean_ctor_get(x_1, 0);
-x_10 = lean_ctor_get(x_1, 1);
 x_11 = lean_level_eq(x_7, x_9);
-lean_dec(x_7);
+lean_dec(x_9);
 if (x_11 == 0)
 {
 size_t x_12; size_t x_13; 
-lean_dec(x_8);
+lean_dec(x_10);
 x_12 = 1;
 x_13 = lean_usize_add(x_3, x_12);
 x_3 = x_13;
@@ -14265,7 +14265,7 @@ else
 {
 uint8_t x_15; 
 x_15 = lean_nat_dec_eq(x_8, x_10);
-lean_dec(x_8);
+lean_dec(x_10);
 if (x_15 == 0)
 {
 size_t x_16; size_t x_17; 
@@ -14324,7 +14324,7 @@ if (x_5 == 0)
 {
 lean_object* x_6; uint8_t x_7; 
 x_6 = lean_array_uget(x_2, x_3);
-x_7 = lean_level_eq(x_6, x_1);
+x_7 = lean_level_eq(x_1, x_6);
 lean_dec(x_6);
 if (x_7 == 0)
 {
