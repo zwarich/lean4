@@ -307,68 +307,7 @@ def lowerParam (p : LCNF.Param) : M Param := do
 mutual
 partial def lowerCode (c : LCNF.Code) : M FnBody := do
   match c with
-  | .let decl k =>
-    if let .proj typeName i fvarId := decl.value then
-      match (← get).fvars[fvarId]? with
-      | some (.var varId) =>
-        -- TODO: have better pattern matching here
-        let some (.inductInfo { ctors, .. }) := (← Lean.getEnv).find? typeName | panic! "projection of non-inductive type"
-        let ctorName := ctors[0]!
-        let ⟨ctorInfo, fields⟩ ← getCtorInfo ctorName
-        let ⟨result, type⟩ := lowerProjWithType varId ctorInfo fields[i]!
-        match result with
-        | .expr e =>
-          let var ← bindVar decl.fvarId
-          return .vdecl var type e (← lowerCode k)
-        | .erased =>
-          bindErased decl.fvarId
-          lowerCode k
-      | some .erased =>
-        bindErased decl.fvarId
-        lowerCode k
-      | some (.joinPoint ..) => panic! "expected var or erased value"
-      | none => panic! "reference to unbound variable"
-    else
-      let type ← lowerType decl.type
-      match (← lowerLetValue decl.value) with
-      | .expr e =>
-        let var ← bindVar decl.fvarId
-        let type := match e with
-        | .ctor .. | .pap .. | .proj .. => .object
-        | _ => type
-        return .vdecl var type e (← lowerCode k)
-      | .var varId =>
-        bindVarToVarId decl.fvarId varId
-        lowerCode k
-      | .ctor ctorInfo objArgs usizeArgs scalarArgs =>
-        let var ← bindVar decl.fvarId
-        let rec emitScalarArgs (i : Nat) : M FnBody :=
-          if i == scalarArgs.size then
-            lowerCode k
-          else if let ⟨offset, argType, .var argVar⟩ := scalarArgs[i]! then
-            return .sset var (ctorInfo.size + ctorInfo.usize) offset argVar argType (← emitScalarArgs (i + 1))
-          else
-            emitScalarArgs (i + 1)
-        let rec emitUSizeSets (i : Nat) : M FnBody :=
-          if i == usizeArgs.size then
-            emitScalarArgs 0
-          else if let .var argVar := usizeArgs[i]! then
-            return .uset var (ctorInfo.size + i) argVar (← emitUSizeSets (i + 1))
-          else
-            emitUSizeSets (i + 1)
-        return .vdecl var .object (.ctor ctorInfo objArgs) (← emitUSizeSets 0)
-      | .apOfExprResult e restArgs =>
-        let var ← bindVar decl.fvarId
-        let tmpVar ← newVar
-        return .vdecl tmpVar .object e (.vdecl var type (.ap tmpVar restArgs) (← lowerCode k))
-      | .natSucc arg =>
-        let var ← bindVar decl.fvarId
-        let tmpVar ← newVar
-        return .vdecl tmpVar .object (.lit (.num 1)) (.vdecl var type (.fap ``Nat.add #[arg, (.var tmpVar)]) (← lowerCode k))
-      | .erased =>
-        bindErased decl.fvarId
-        lowerCode k
-      | .unreachable => return .unreachable
+  | .let decl k => lowerLet decl k
   | .jp decl k =>
     let joinPoint ← bindJoinPoint decl.fvarId
     let params ← decl.params.mapM lowerParam
@@ -398,6 +337,228 @@ partial def lowerCode (c : LCNF.Code) : M FnBody := do
     return .ret arg
   | .unreach .. => return .unreachable
   | .fun .. => panic! "all local functions should be λ-lifted"
+
+partial def lowerLet (decl : LCNF.LetDecl) (k : LCNF.Code) : M FnBody := do
+  let mkVar (v : VarId) : M FnBody := do
+    bindVarToVarId decl.fvarId v
+    lowerCode k
+  let mkExpr (e : Expr) : M FnBody := do
+    let var ← bindVar decl.fvarId
+    let type ← match e with
+    | .ctor .. | .pap .. | .proj .. => pure $ .object
+    | _ => lowerType decl.type
+    return .vdecl var type e (← lowerCode k)
+  let mkErased (_ : Unit) : M FnBody := do
+    bindErased decl.fvarId
+    lowerCode k
+  let mkPartialApp (e : Expr) (restArgs : Array Arg) : M FnBody := do
+    let var ← bindVar decl.fvarId
+    let tmpVar ← newVar
+    let type ← match e with
+    | .ctor .. | .pap .. | .proj .. => pure $ .object
+    | _ => lowerType decl.type
+    return .vdecl tmpVar .object e (.vdecl var type (.ap tmpVar restArgs) (← lowerCode k))
+
+  match decl.value with
+  | .value litValue =>
+    mkExpr (.lit (lowerLitValue litValue))
+  | .proj typeName i fvarId =>
+    match (← get).fvars[fvarId]? with
+    | some (.var varId) =>
+      -- TODO: have better pattern matching here
+      let some (.inductInfo { ctors, .. }) := (← Lean.getEnv).find? typeName | panic! "projection of non-inductive type"
+      let ctorName := ctors[0]!
+      let ⟨ctorInfo, fields⟩ ← getCtorInfo ctorName
+      let ⟨result, type⟩ := lowerProjWithType varId ctorInfo fields[i]!
+      match result with
+      | .expr e =>
+        let var ← bindVar decl.fvarId
+        return .vdecl var type e (← lowerCode k)
+      | .erased =>
+        bindErased decl.fvarId
+        lowerCode k
+    | some .erased =>
+      bindErased decl.fvarId
+      lowerCode k
+    | some (.joinPoint ..) => panic! "expected var or erased value"
+    | none => panic! "reference to unbound variable"
+  | .const ``Nat.succ _ args =>
+    let irArgs ← args.mapM lowerArg
+    let var ← bindVar decl.fvarId
+    let tmpVar ← newVar
+    return .vdecl tmpVar .object (.lit (.num 1)) (.vdecl var .object (.fap ``Nat.add #[irArgs[0]!, (.var tmpVar)]) (← lowerCode k))
+  | .const name _ args =>
+    let irArgs ← args.mapM lowerArg
+    if let some decl ← LCNF.getMonoDecl? name then
+      let numArgs := irArgs.size
+      let numParams := decl.params.size
+      if numArgs < numParams then
+        mkExpr (.pap name irArgs)
+      else if numArgs == numParams then
+        mkExpr (.fap name irArgs)
+      else
+        let firstArgs := irArgs.extract 0 numParams
+        let restArgs := irArgs.extract numParams irArgs.size
+        mkPartialApp (.fap name firstArgs) restArgs
+    else
+      let env ← Lean.getEnv
+      match env.find? name with
+      | some (.ctorInfo ctorVal) =>
+        if isExtern env name then
+          -- TODO: share this
+          if let some irDecl ← findDecl name then
+            let numArgs := irArgs.size
+            let numParams := irDecl.params.size
+            if numArgs < numParams then
+              mkExpr (.pap name irArgs)
+            else if numArgs == numParams then
+              mkExpr (.fap name irArgs)
+            else
+              let firstArgs := irArgs.extract 0 numParams
+              let restArgs := irArgs.extract numParams irArgs.size
+              mkPartialApp (.fap name firstArgs) restArgs
+          else
+              mkExpr (.fap name irArgs)
+        else
+          let ⟨ctorInfo, fields⟩ ← getCtorInfo name
+          let fields := fields.toArray
+          let args := args.extract (start := ctorVal.numParams)
+          let objArgs : Array Arg ← do
+            let mut result : Array Arg := #[]
+            for i in [0:fields.size] do
+              match args[i]! with
+              | .fvar fvarId =>
+                if let some (.var varId) := (← get).fvars[fvarId]? then
+                  if fields[i]! matches .object .. then
+                    result := result.push (.var varId)
+              | .type _ | .erased =>
+                if fields[i]! matches .object .. then
+                  result := result.push .irrelevant
+            pure result
+          let objVar ← bindVar decl.fvarId
+          let rec lowerNonObjectFields (_ : Unit) : M FnBody :=
+            let rec loop (usizeCount : Nat) (i : Nat) : M FnBody := do
+              match args[i]? with
+              | some (.fvar fvarId) =>
+                match (← get).fvars[fvarId]? with
+                | some (.var varId) =>
+                  match fields[i]! with
+                  | .usize .. =>
+                    return .uset objVar (ctorInfo.size + usizeCount) varId (← loop (usizeCount + 1) (i + 1))
+                  | .scalar _ offset argType =>
+                    return .sset objVar (ctorInfo.size + ctorInfo.usize) offset varId argType (← loop usizeCount (i + 1))
+                  | .object .. | .irrelevant => loop usizeCount (i + 1)
+                | _ => loop usizeCount (i + 1)
+              | some (.type _) | some .erased => loop usizeCount (i + 1)
+              | none => lowerCode k
+            loop 0 0
+          return .vdecl objVar .object (.ctor ctorInfo objArgs) (← lowerNonObjectFields ())
+      | some (.axiomInfo ..) =>
+        if name == ``Quot.lcInv then
+          match irArgs[2]! with
+          | .var varId => mkVar varId
+          | .irrelevant => mkErased ()
+        else if name == ``lcUnreachable then
+          return .unreachable
+        else
+          throwError f!"axiom '{name}' not supported by code generator; consider marking definition as 'noncomputable'"
+      | some (.quotInfo ..) =>
+        if name == ``Quot.mk then
+          match irArgs[2]! with
+          | .var varId => mkVar varId
+          | .irrelevant => mkErased ()
+        else
+          throwError f!"quot {name} unsupported by code generator"
+      | some (.defnInfo ..) | some (.opaqueInfo ..) =>
+        -- TODO: share this
+        if let some irDecl ← findDecl name then
+          let numArgs := irArgs.size
+          let numParams := irDecl.params.size
+          if numArgs < numParams then
+            mkExpr (.pap name irArgs)
+          else if numArgs == numParams then
+            mkExpr (.fap name irArgs)
+          else
+            let firstArgs := irArgs.extract 0 numParams
+            let restArgs := irArgs.extract numParams irArgs.size
+            mkPartialApp (.fap name firstArgs) restArgs
+        else
+          mkExpr (.fap name irArgs)
+      | some (.inductInfo ..) => panic! "induct unsupported by code generator"
+      | some (.recInfo ..) =>
+        throwError f!"code generator does not support recursor '{name}' yet, consider using 'match ... with' and/or structural recursion"
+      | some (.thmInfo ..) => panic! "thm unsupported by code generator"
+      | none => panic! "reference to unbound name"
+  | .fvar fvarId args =>
+    let irArgs ← args.mapM lowerArg
+    match (← get).fvars[fvarId]? with
+    | some (.var id) => mkExpr (.ap id irArgs)
+    | some .erased => mkErased ()
+    | some (.joinPoint ..) => panic! "expected var or erased value"
+    | .none => panic! "reference to unbound variable"
+  | .erased => mkErased ()
+
+  -- if let .proj typeName i fvarId := decl.value then
+  --   match (← get).fvars[fvarId]? with
+  --   | some (.var varId) =>
+  --     -- TODO: have better pattern matching here
+  --     let some (.inductInfo { ctors, .. }) := (← Lean.getEnv).find? typeName | panic! "projection of non-inductive type"
+  --     let ctorName := ctors[0]!
+  --     let ⟨ctorInfo, fields⟩ ← getCtorInfo ctorName
+  --     let ⟨result, type⟩ := lowerProjWithType varId ctorInfo fields[i]!
+  --     match result with
+  --     | .expr e =>
+  --       let var ← bindVar decl.fvarId
+  --       return .vdecl var type e (← lowerCode k)
+  --     | .erased =>
+  --       bindErased decl.fvarId
+  --       lowerCode k
+  --   | some .erased =>
+  --     bindErased decl.fvarId
+  --     lowerCode k
+  --   | some (.joinPoint ..) => panic! "expected var or erased value"
+  --   | none => panic! "reference to unbound variable"
+  -- else
+  --   let type ← lowerType decl.type
+  --   match (← lowerLetValue decl.value) with
+  --   | .expr e =>
+  --     let var ← bindVar decl.fvarId
+  --     let type := match e with
+  --     | .ctor .. | .pap .. | .proj .. => .object
+  --     | _ => type
+  --     return .vdecl var type e (← lowerCode k)
+  --   | .var varId =>
+  --     bindVarToVarId decl.fvarId varId
+  --     lowerCode k
+  --   | .ctor ctorInfo objArgs usizeArgs scalarArgs =>
+  --     let var ← bindVar decl.fvarId
+  --     let rec emitScalarArgs (i : Nat) : M FnBody :=
+  --       if i == scalarArgs.size then
+  --         lowerCode k
+  --       else if let ⟨offset, argType, .var argVar⟩ := scalarArgs[i]! then
+  --         return .sset var (ctorInfo.size + ctorInfo.usize) offset argVar argType (← emitScalarArgs (i + 1))
+  --       else
+  --         emitScalarArgs (i + 1)
+  --     let rec emitUSizeSets (i : Nat) : M FnBody :=
+  --       if i == usizeArgs.size then
+  --         emitScalarArgs 0
+  --       else if let .var argVar := usizeArgs[i]! then
+  --         return .uset var (ctorInfo.size + i) argVar (← emitUSizeSets (i + 1))
+  --       else
+  --         emitUSizeSets (i + 1)
+  --     return .vdecl var .object (.ctor ctorInfo objArgs) (← emitUSizeSets 0)
+  --   | .apOfExprResult e restArgs =>
+  --     let var ← bindVar decl.fvarId
+  --     let tmpVar ← newVar
+  --     return .vdecl tmpVar .object e (.vdecl var type (.ap tmpVar restArgs) (← lowerCode k))
+  --   | .natSucc arg =>
+  --     let var ← bindVar decl.fvarId
+  --     let tmpVar ← newVar
+  --     return .vdecl tmpVar .object (.lit (.num 1)) (.vdecl var type (.fap ``Nat.add #[arg, (.var tmpVar)]) (← lowerCode k))
+  --   | .erased =>
+  --     bindErased decl.fvarId
+  --     lowerCode k
+  --   | .unreachable => return .unreachable
 
 partial def lowerAlt (discr : VarId) (a : LCNF.AltCore LCNF.Code) : M (AltCore FnBody) := do
   match a with
