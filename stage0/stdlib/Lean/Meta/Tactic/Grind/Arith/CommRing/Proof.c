@@ -6719,7 +6719,7 @@ static lean_object* _init_l___private_Lean_Meta_Tactic_Grind_Arith_CommRing_Proo
 _start:
 {
 lean_object* x_1; 
-x_1 = lean_mk_string_unchecked("`grind` internal error, `NoZeroNatDivisors` instance is needed, but it is not available for", 91, 91);
+x_1 = lean_mk_string_unchecked("`grind` internal error, `NoNatZeroDivisors` instance is needed, but it is not available for", 91, 91);
 return x_1;
 }
 }
