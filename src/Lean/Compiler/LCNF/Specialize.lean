@@ -279,6 +279,14 @@ mutual
     let .code _ := decl.value | return none
     trace[Compiler.specialize.candidate] "{e.toExpr}, {paramsInfo}"
     let (argMask, params, decls) ← Collector.collect paramsInfo args
+    let mut paramVars : FVarIdSet := {}
+    for param in params do
+      paramVars := paramVars.insert param.fvarId
+    let mut declVars : FVarIdSet := {}
+    for decl in decls do
+      declVars := declVars.insert decl.fvarId
+    trace[Compiler.specialize.candidate] f!"declVars={repr declVars.toList}"
+    trace[Compiler.specialize.candidate] f!"paramVars={repr paramVars.toList}"
     let keyBody := .const declName us (argMask.filterMap id)
     let (key, levelParamsNew) ← mkKey params decls keyBody
     trace[Compiler.specialize.candidate] "key: {key}"
