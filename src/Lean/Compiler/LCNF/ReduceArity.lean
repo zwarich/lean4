@@ -52,10 +52,10 @@ namespace FindUsed
 
 structure Context where
   decl : Decl
-  params : FVarIdSet
+  params : FVarIdHashSet
 
 structure State where
-  used : FVarIdSet := {}
+  used : FVarIdHashSet := {}
 
 abbrev FindUsedM := ReaderT Context <| StateRefT State CompilerM
 
@@ -106,7 +106,7 @@ partial def visit (code : Code) : FindUsedM Unit := do
   | .return fvarId => visitFVar fvarId
   | .unreach _ => return ()
 
-def collectUsedParams (decl : Decl) : CompilerM FVarIdSet := do
+def collectUsedParams (decl : Decl) : CompilerM FVarIdHashSet := do
   let params := decl.params.foldl (init := {}) fun s p => s.insert p.fvarId
   let (_, { used, .. }) ← decl.value.forCodeM visit |>.run { decl, params } |>.run {}
   return used
