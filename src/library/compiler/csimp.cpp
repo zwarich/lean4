@@ -1827,7 +1827,7 @@ class csimp_fn {
     }
 
     expr visit_nat_succ(expr const & e) {
-        expr arg = visit(app_arg(e), false);
+        expr arg = visit_arg(app_arg(e));
         return mk_app(mk_constant(get_nat_add_name()), arg, mk_lit(literal(nat(1))));
     }
 
