@@ -219,8 +219,6 @@ partial def checkFnBody (fnBody : FnBody) : M Unit := do
   | .del x b =>
     checkVar x
     checkFnBody b
-  | .mdata _ b =>
-    checkFnBody b
   | .jmp j ys =>
     checkJP j
     checkArgs ys
