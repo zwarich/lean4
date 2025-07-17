@@ -9,6 +9,11 @@ import Lean.Compiler.LCNF.PhaseExt
 import Lean.Compiler.LCNF.InferType
 import Lean.Compiler.LCNF.Internalize
 
+register_builtin_option Compiler.eraseUnused : Bool := {
+  defValue := true
+  descr    := "wip"
+}
+
 namespace Lean.Compiler.LCNF
 /-!
 # Function arity reduction
@@ -168,14 +173,20 @@ def Decl.reduceArity (decl : Decl) : CompilerM (Array Decl) := do
       let updateDecl : InternalizeM Decl := do
         let mut params := Array.emptyWithCapacity decl.params.size
         let mut args := #[]
-        for used in mask, param in decl.params do
-          let param ← if used then
-            let param ← internalizeParam param
-            args := args.push param.toArg
-            pure param
-          else
-            mkParam param.binderName erasedExpr param.borrow
-          params := params.push param
+        if Compiler.eraseUnused.get (← getOptions) then
+          for used in mask, param in decl.params do
+            let param ← if used then
+              let param ← internalizeParam param
+              args := args.push param.toArg
+              pure param
+            else
+              mkParam param.binderName erasedExpr param.borrow
+            params := params.push param
+        else
+          params ← decl.params.mapM internalizeParam
+          for used in mask, param in params do
+            if used then
+              args := args.push param.toArg
         let letDecl ← mkAuxLetDecl (.const auxName [] args)
         let code := .let letDecl (.return letDecl.fvarId)
         let type ← mkForallParams params (← code.inferType)
