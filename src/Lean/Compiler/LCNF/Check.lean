@@ -87,6 +87,7 @@ structure Context where
   jps : FVarIdSet := {}
   /-- Variables and local functions in scope -/
   vars : FVarIdSet := {}
+  erasedParams : FVarIdSet := {}
 
 structure State where
   /-- All free variables found -/
@@ -97,8 +98,11 @@ abbrev CheckM := ReaderT Context $ StateRefT State InferTypeM
 def checkTypes : CheckM Bool := do
   return (← getConfig).checkTypes
 
-def checkFVar (fvarId : FVarId) : CheckM Unit :=
-  unless (← read).vars.contains fvarId do
+def checkFVar (fvarId : FVarId) : CheckM Unit := do
+  let ctx ← read
+  if ctx.erasedParams.contains fvarId then
+    throwError "use of erased param {← getBinderName fvarId}"
+  unless ctx.vars.contains fvarId do
     throwError "invalid out of scope free variable {← getBinderName fvarId}"
 
 /-- Return true `f` is a constructor and `i` is less than its number of parameters. -/
@@ -190,7 +194,7 @@ def addFVarId (fvarId : FVarId) : CheckM Unit := do
 
 @[inline] def withParams (params : Array Param) (x : CheckM α) : CheckM α := do
   params.forM (addFVarId ·.fvarId)
-  withReader (fun ctx => { ctx with vars := params.foldl (init := ctx.vars) fun vars p => vars.insert p.fvarId })
+  withReader (fun ctx => { ctx with vars := params.foldl (init := ctx.vars) fun vars p => vars.insert p.fvarId, erasedParams := params.foldl (init := ctx.erasedParams) fun vars p => if p.type.isErased then vars.insert p.fvarId else vars })
     x
 
 mutual
