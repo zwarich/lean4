@@ -4427,7 +4427,7 @@ lean_inc(x_13);
 lean_inc_ref(x_12);
 lean_inc_ref(x_11);
 lean_inc_ref(x_25);
-x_27 = l_Lean_Meta_withLocalDeclD___at___Lean_Elab_ComputedFields_overrideCasesOn_spec__3___redArg(x_26, x_25, x_18, x_11, x_12, x_13, x_14, x_15, x_16);
+x_27 = l_Lean_Meta_withLocalDeclD___at___Lean_Elab_ComputedFields_overrideCasesOn_spec__3___redArg(x_26, x_25, x_21, x_11, x_12, x_13, x_14, x_15, x_16);
 if (lean_obj_tag(x_27) == 0)
 {
 lean_object* x_28; lean_object* x_29; lean_object* x_30; 
@@ -4440,7 +4440,7 @@ lean_inc(x_15);
 lean_inc_ref(x_14);
 lean_inc(x_13);
 lean_inc_ref(x_12);
-x_30 = l_Lean_Elab_ComputedFields_mkUnsafeCastTo(x_25, x_21, x_12, x_13, x_14, x_15, x_29);
+x_30 = l_Lean_Elab_ComputedFields_mkUnsafeCastTo(x_25, x_18, x_12, x_13, x_14, x_15, x_29);
 if (lean_obj_tag(x_30) == 0)
 {
 lean_object* x_31; lean_object* x_32; uint8_t x_33; 
@@ -4682,9 +4682,9 @@ else
 {
 lean_dec_ref(x_25);
 lean_dec_ref(x_22);
-lean_dec_ref(x_21);
 lean_dec_ref(x_20);
 lean_dec_ref(x_19);
+lean_dec_ref(x_18);
 lean_dec(x_15);
 lean_dec_ref(x_14);
 lean_dec(x_13);
@@ -4737,10 +4737,10 @@ lean_object* x_123;
 x_123 = lean_alloc_ctor(0, 2, 0);
 lean_ctor_set(x_123, 0, x_120);
 lean_ctor_set(x_123, 1, x_121);
-x_18 = x_116;
+x_18 = x_118;
 x_19 = x_114;
 x_20 = x_115;
-x_21 = x_118;
+x_21 = x_116;
 x_22 = x_123;
 goto block_105;
 }
@@ -4751,10 +4751,10 @@ lean_dec(x_120);
 x_124 = lean_alloc_ctor(0, 2, 0);
 lean_ctor_set(x_124, 0, x_113);
 lean_ctor_set(x_124, 1, x_121);
-x_18 = x_116;
+x_18 = x_118;
 x_19 = x_114;
 x_20 = x_115;
-x_21 = x_118;
+x_21 = x_116;
 x_22 = x_124;
 goto block_105;
 }
@@ -13021,22 +13021,22 @@ lean_ctor_set(x_20, 0, x_18);
 x_21 = lean_alloc_ctor(0, 2, 0);
 lean_ctor_set(x_21, 0, x_20);
 lean_ctor_set(x_21, 1, x_19);
-x_22 = l_Std_Iterators_IterM_DefaultConsumers_toArrayMapped_go___at___Lean_Meta_Simp_trySimpCongrTheorem_x3f_spec__2___redArg(x_17, x_21, x_14);
+x_22 = l_Std_Iterators_IterM_DefaultConsumers_toArrayMapped_go___at___Lean_Meta_Simp_trySimpCongrTheorem_x3f_spec__2___redArg(x_17, x_21, x_13);
 lean_dec_ref(x_17);
 lean_inc_ref(x_7);
 lean_inc_ref(x_22);
 lean_inc_ref(x_4);
-lean_inc_ref(x_13);
+lean_inc_ref(x_14);
 x_23 = lean_alloc_closure((void*)(l_Lean_Elab_ComputedFields_mkComputedFieldOverrides___lam__0), 12, 6);
 lean_closure_set(x_23, 0, x_2);
 lean_closure_set(x_23, 1, x_3);
-lean_closure_set(x_23, 2, x_13);
+lean_closure_set(x_23, 2, x_14);
 lean_closure_set(x_23, 3, x_4);
 lean_closure_set(x_23, 4, x_22);
 lean_closure_set(x_23, 5, x_7);
 x_24 = lean_array_size(x_4);
 x_25 = 0;
-x_26 = l_Array_mapMUnsafe_map___at___Lean_Elab_ComputedFields_mkComputedFieldOverrides_spec__0(x_13, x_22, x_7, x_24, x_25, x_4);
+x_26 = l_Array_mapMUnsafe_map___at___Lean_Elab_ComputedFields_mkComputedFieldOverrides_spec__0(x_14, x_22, x_7, x_24, x_25, x_4);
 x_27 = l_Lean_Meta_withLocalDeclsD___at___Lean_Meta_withLocalDeclsDND___at___Lean_Meta_Match_genMatchCongrEqns_go_spec__2_spec__3___redArg(x_5, x_26, x_23, x_8, x_9, x_10, x_11, x_12);
 return x_27;
 }
@@ -13062,8 +13062,8 @@ x_39 = lean_array_get_size(x_1);
 x_40 = lean_nat_dec_le(x_6, x_36);
 if (x_40 == 0)
 {
-x_13 = x_38;
-x_14 = x_37;
+x_13 = x_37;
+x_14 = x_38;
 x_15 = x_6;
 x_16 = x_39;
 goto block_28;
@@ -13071,8 +13071,8 @@ goto block_28;
 else
 {
 lean_dec(x_6);
-x_13 = x_38;
-x_14 = x_37;
+x_13 = x_37;
+x_14 = x_38;
 x_15 = x_36;
 x_16 = x_39;
 goto block_28;

@@ -2232,11 +2232,11 @@ return x_3;
 block_10:
 {
 uint8_t x_8; lean_object* x_9; 
-x_8 = lean_ctor_get_uint8(x_6, sizeof(void*)*1);
-lean_dec_ref(x_6);
+x_8 = lean_ctor_get_uint8(x_5, sizeof(void*)*1);
+lean_dec_ref(x_5);
 x_9 = lean_alloc_ctor(7, 3, 2);
 lean_ctor_set(x_9, 0, x_2);
-lean_ctor_set(x_9, 1, x_5);
+lean_ctor_set(x_9, 1, x_6);
 lean_ctor_set(x_9, 2, x_3);
 lean_ctor_set_uint8(x_9, sizeof(void*)*3, x_7);
 lean_ctor_set_uint8(x_9, sizeof(void*)*3 + 1, x_8);
@@ -2260,8 +2260,8 @@ x_15 = l_Lean_IR_IRType_isDefiniteRef(x_13);
 lean_dec(x_13);
 if (x_15 == 0)
 {
-x_5 = x_14;
-x_6 = x_12;
+x_5 = x_12;
+x_6 = x_14;
 x_7 = x_11;
 goto block_10;
 }
@@ -2269,8 +2269,8 @@ else
 {
 uint8_t x_16; 
 x_16 = 0;
-x_5 = x_14;
-x_6 = x_12;
+x_5 = x_12;
+x_6 = x_14;
 x_7 = x_16;
 goto block_10;
 }
