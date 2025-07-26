@@ -9,6 +9,7 @@ Author: Leonardo de Moura
 #include <stdbool.h>
 #include <stdint.h>
 #include <limits.h>
+#include <string.h>
 
 #include <lean/config.h>
 
@@ -2787,13 +2788,26 @@ static inline double lean_unbox_float(b_lean_obj_arg o) {
 }
 
 static inline lean_obj_res lean_box_float32(float v) {
-    lean_obj_res r = lean_alloc_ctor(0, 0, sizeof(float)); // NOLINT
-    lean_ctor_set_float32(r, 0, v);
-    return r;
+    if (sizeof(void*) == 8) {
+        uint32_t uint32_v;
+        memcpy(&uint32_v, &v, sizeof(uint32_v));
+        return lean_box(uint32_v);
+    } else {
+        lean_obj_res r = lean_alloc_ctor(0, 0, sizeof(float)); // NOLINT
+        lean_ctor_set_float32(r, 0, v);
+        return r;
+    }
 }
 
 static inline float lean_unbox_float32(b_lean_obj_arg o) {
-    return lean_ctor_get_float32(o, 0);
+    if (sizeof(void*) == 8) {
+        uint32_t uint32_v = lean_unbox(o);
+        float v;
+        memcpy(&v, &uint32_v, sizeof(v));
+        return v;
+    } else {
+        return lean_ctor_get_float32(o, 0);
+    }
 }
 
 /* Debugging helper functions */
